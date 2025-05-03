@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fat Tracker</title>
+  <link
+  href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+  rel="stylesheet"
+  />
+
+</head>
+<body class="bg-light">
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <form method="GET" action="/">
+        <input type="hidden" name="date" value="{{ (day.date - timedelta(days=1)).isoformat() }}">
+        <button class="btn btn-outline-secondary">&larr;</button>
+      </form>
+      <h2 class="mb-0">{{ day.date }}</h2>
+      <form method="GET" action="/">
+        <input type="hidden" name="date" value="{{ (day.date + timedelta(days=1)).isoformat() }}">
+        <button class="btn btn-outline-secondary">&rarr;</button>
+      </form>
+    </div>
+
+    <!-- Weight -->
+    <div class="mb-4">
+      <h4>Weight</h4>
+      {% if day.weight %}
+        <p class="lead">{{ day.weight }} lbs</p>
+      {% else %}
+        <form method="POST" action="/add_weight" class="d-flex gap-2">
+          <input type="number" name="weight" step="0.1" class="form-control" placeholder="Enter weight">
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      {% endif %}
+    </div>
+
+    <!-- Jolly Rancher -->
+    <div class="mb-4">
+      <h4>Jolly Ranchers</h4>
+      <p class="lead">{{ candies.count if candies else 0 }}</p>
+      <form method="POST" action="/add_candy" class="d-inline">
+        <button class="btn btn-success">+1</button>
+      </form>
+      <form method="POST" action="/remove_candy" class="d-inline">
+        <button class="btn btn-danger">−1</button>
+      </form>
+    </div>
+
+    <!-- Food -->
+    <div class="mb-4">
+      <h4>Food Log</h4>
+      <form method="POST" action="/add_food" class="row g-2 mb-3">
+        <div class="col-6">
+          <input type="text" name="name" class="form-control" placeholder="Food name" required>
+        </div>
+        <div class="col-4">
+          <input type="number" name="calories" class="form-control" placeholder="Calories" required>
+        </div>
+        <div class="col-2">
+          <button class="btn btn-primary w-100">Add</button>
+        </div>
+      </form>
+      {% for food in foods %}
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <div>• {{ food.name }} - {{ food.calories }} cal</div>
+          <form method="POST" action="/delete_food/{{ food.id }}">
+            <button class="btn btn-sm btn-outline-danger">✖</button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Summary -->
+    <div class="mb-4">
+      <h4>Summary</h4>
+      <p>Total: {{ total_cals|round }} / {{ day.goal_calories }} cal</p>
+      <p>{{ ((total_cals / day.goal_calories) * 100)|round(1) }}%</p>
+      <form method="POST" action="/edit_goal" class="d-flex gap-2">
+        <input type="number" name="goal" class="form-control" placeholder="New goal">
+        <button class="btn btn-warning">Update</button>
+      </form>
+    </div>
+
+    <!-- Reset -->
+    <form method="POST" action="/reset_day">
+      <button class="btn btn-outline-danger w-100">Reset Day</button>
+    </form>
+  </div>
+</body>
+</html>

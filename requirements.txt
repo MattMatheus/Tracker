@@ -1,0 +1,4 @@
+flask
+flask_sqlalchemy
+flask_cors          # for API access from other apps or devices
+flask_migrate       # if you want DB migrations
