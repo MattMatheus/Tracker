@@ -1,0 +1,31 @@
+# .github/workflows/deploy-flask.yml
+name: Deploy Flask App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: [self-hosted]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install --user -r requirements.txt
+
+      - name: Sync to web root
+        run: |
+          rsync -a --delete ./ /var/www/myapp/
+        # adjust destination if your app lives elsewhere
+
+      - name: Restart service
+        run: sudo systemctl restart myapp.service
+        # assumes you have a systemd service named "myapp.service"
