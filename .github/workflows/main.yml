@@ -1,12 +1,15 @@
-- name: Run Python Script
-  # You may pin to the exact comit or the version.
-     uses: jannekem/run-python-script-action
-    with:
-        # Python script
-      script: 
-        # Fail step if the return code from running the script is non-zero
-        print('Hello world')
-      fail-on-error: # optional, default is true
-        # Include utility functions
-      util: # optional, default is true
-          
+# .github/workflows/list-files.yml
+name: List Files
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  list:
+    runs-on: [self-hosted]
+    steps:
+      - name: List working directory
+        run: ls -la
+
